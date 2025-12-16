@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: leads_mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=leads_db
+
+  api:
+    build: .
+    container_name: leads_api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URL=mongodb://mongodb:27017
+      - DATABASE_NAME=leads_db
+      - EXTERNAL_API_URL=https://dummyjson.com/users/1
+    volumes:
+      - .:/app
+
+volumes:
+  mongodb_data:
